@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    ports:
+      - "1998:1998"
+    restart: always
+    volumes:
+      - "uploads:/tmp/pond"
+
+volumes:
+  uploads: {}
