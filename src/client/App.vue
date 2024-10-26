@@ -35,7 +35,7 @@ function upload() {
 
         <FileList :files="files" />
 
-        <UploadButton class="block center" @click="upload()" />
+        <UploadButton class="block center" @click="upload" />
         <Modal :show="showModal" @close="showModal = false">
             <Progress class="block center" :percent="percent" />
         </Modal>
