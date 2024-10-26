@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { defineEmits } from "vue";
+// defineProps<>();
 
-defineProps<{ msg: string }>();
-
-const count = ref(0);
+const emit = defineEmits(["openModal"]);
 </script>
 
 <template>
-    <button type="button" @click="count++">count is {{ count }}</button>
+    <button type="button" @click="emit('openModal')">Upload!</button>
 </template>
