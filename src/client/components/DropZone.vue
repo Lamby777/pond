@@ -36,6 +36,8 @@ function handleFileSelect(event: Event) {
     text-align: center;
     cursor: pointer;
     transition: background-color 0.2s;
+    width: 50%;
+    margin: 0 auto;
 }
 
 .drop-zone:hover {
