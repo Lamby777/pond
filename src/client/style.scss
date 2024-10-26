@@ -1,3 +1,5 @@
+$lwhite: #f8f8f2;
+
 body {
     margin: 0;
     display: flex;
@@ -5,7 +7,7 @@ body {
     min-width: 320px;
     min-height: 100vh;
     background-color: #121212;
-    color: #f8f8f2;
+    color: $lwhite;
 }
 
 #app {
@@ -23,6 +25,10 @@ body {
 
 .text-center {
     text-align: center;
+}
+
+.text-white {
+    color: $lwhite;
 }
 
 button {

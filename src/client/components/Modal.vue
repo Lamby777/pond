@@ -8,7 +8,7 @@ const props = defineProps<{ show: boolean }>();
     <div v-if="show" class="modal">
         <div class="modal-content">
             <slot></slot>
-            <button @click="$emit('close')">Close</button>
+            <button class="text-white" @click="$emit('close')">Close</button>
         </div>
     </div>
 </template>
@@ -23,7 +23,8 @@ const props = defineProps<{ show: boolean }>();
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+    color: black;
 }
 
 .modal-content {

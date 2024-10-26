@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { defineEmits } from "vue";
-// defineProps<>();
-
-const emit = defineEmits(["openModal"]);
+const emit = defineEmits(["click"]);
 </script>
 
 <template>
-    <button type="button" @click="emit('openModal')">Upload!</button>
+    <button type="button" @click="emit('click')">Upload!</button>
 </template>
