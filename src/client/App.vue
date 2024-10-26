@@ -11,7 +11,7 @@ const percent = ref(0);
 const showModal = ref(false);
 
 function handleFilesDropped(droppedFiles: File[]) {
-    files.value = droppedFiles;
+    files.value.push(...droppedFiles);
 }
 
 function upload() {
