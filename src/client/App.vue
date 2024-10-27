@@ -17,12 +17,27 @@ function handleFilesDropped(droppedFiles: File[]) {
 function upload() {
     showModal.value = true;
 
-    const interval = setInterval(() => {
-        percent.value += 10;
-        if (percent.value >= 100) {
-            clearInterval(interval);
+    const formData = new FormData();
+    files.value.forEach((file) => {
+        formData.append("files", file);
+    });
+
+    fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+        onprogress: (event: ProgressEvent) => {
+            if (event.lengthComputable) {
+                percent.value = (event.loaded / event.total) * 99;
+            }
         }
-    }, 1000);
+    }).then(() => {
+        percent.value = 100;
+        setTimeout(() => {
+            percent.value = 0;
+            files.value = [];
+            showModal.value = false;
+        }, 1000);
+    });
 }
 </script>
 
@@ -30,7 +45,7 @@ function upload() {
     <h1 class="text-center">Ducc Pond</h1>
     <div class="text-center">
         <DropZone @filesDropped="handleFilesDropped">
-            <p>Drop files here to upload</p>
+            <p>Drop file(s) here...</p>
         </DropZone>
 
         <FileList :files="files" />

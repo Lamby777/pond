@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineEmits, ref } from "vue";
+import { ref } from "vue";
 
 const emit = defineEmits<{
-    (e: 'filesDropped', files: File[]): void;
+    (e: "filesDropped", files: File[]): void;
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);

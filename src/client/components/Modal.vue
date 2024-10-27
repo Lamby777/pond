@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
-
-const props = defineProps<{ show: boolean }>();
+defineProps<{ show: boolean }>();
 </script>
 
 <template>
