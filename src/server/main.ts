@@ -29,8 +29,11 @@ const upload = multer({
 
 app.post("/api/upload", upload.array("files"), (req, res) => {
     if (!req.files) {
-        return res.status(400).send("No file uploaded.");
+        return res.status(400).send("No files uploaded.");
     }
+
+    console.log("Received files:");
+    console.log(req.files);
 
     res.send("File uploaded successfully.");
 });
