@@ -71,7 +71,7 @@ async function upload() {
             <li>Don't upload any illegal content.</li>
             <li>Don't upload anything that you don't have permission to upload.</li>
             <li>Don't use this site as a place to distribute malware.</li>
-            <li>Don't bypass the file size limit by uploading chunks. (may automate this check later)</li>
+            <li>Don't bypass the file size limit by uploading chunks. (might set an hourly quota later)</li>
             <li>Don't try to hack or take down the server (unless you're going to report bugs responsibly)</li>
         </ol>
     </Modal>
