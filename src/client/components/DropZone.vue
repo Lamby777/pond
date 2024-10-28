@@ -42,5 +42,6 @@ function handleFileSelect(event: Event) {
 
 .drop-zone:hover {
     background-color: #f5f5f5;
+    color: #333;
 }
 </style>

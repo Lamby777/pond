@@ -3,7 +3,8 @@ import ViteExpress from "vite-express";
 import multer from "multer";
 import fs from "fs";
 
-import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST } from "./consts";
+import { version } from '../../package.json';
+import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST, FILE_UPLOAD_PASSWORD_HASH } from "./consts";
 
 // make the temp upload directory if it doesn't exist
 if (!fs.existsSync(FILE_UPLOAD_DEST)) {
@@ -25,6 +26,19 @@ const upload = multer({
     }),
 
     limits: { fileSize: FILE_UPLOAD_LIMIT },
+});
+
+app.get("/api/instance", (req, res) => {
+    res.json({
+        /// Is the ability to upload files locked behind a password prompt?
+        secured: !!FILE_UPLOAD_PASSWORD_HASH,
+
+        /// Version of the `pond` backend.
+        backendVersion: version,
+
+        /// The maximum file size allowed for uploads in bytes.
+        fileUploadLimit: FILE_UPLOAD_LIMIT,
+    });
 });
 
 app.post("/api/upload", upload.array("files"), (req, res) => {

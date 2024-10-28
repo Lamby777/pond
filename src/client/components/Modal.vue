@@ -6,7 +6,7 @@ defineProps<{ show: boolean }>();
     <div v-if="show" class="modal">
         <div class="modal-content">
             <slot></slot>
-            <button class="text-white" @click="$emit('close')">Close</button>
+            <button class="text-white float-right" @click="$emit('close')">Close</button>
         </div>
     </div>
 </template>

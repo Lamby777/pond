@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { ref } from "vue";
+
 import Progress from "./components/Progress.vue";
 import Modal from "./components/Modal.vue";
 import DropZone from "./components/DropZone.vue";
 import FileList from "./components/FileList.vue";
 
+import instance from "./stores/instanceInfo";
+
 const files = ref<File[]>([]);
 const percent = ref(0);
+
+// TODO group these into one `reactive()` variable
 const showUploadModal = ref(false);
 const showRulesModal = ref(false);
+const showInstanceModal = ref(false);
 
 function handleFilesDropped(droppedFiles: File[]) {
     files.value.push(...droppedFiles);
@@ -55,10 +61,11 @@ async function upload() {
 
     <div class="footer text-center">
         <button @click="showRulesModal = true">Rules</button>
+        <button @click="showInstanceModal = true">Instance</button>
     </div>
 
     <Modal :show="showRulesModal" @close="showRulesModal = false">
-        <h2>Rules</h2>
+        <h2 class="text-center">Rules</h2>
         <p>TL;DR use common sense. Failure to comply on public instances will probably get you banned.</p>
         <ol>
             <li>Don't upload any illegal content.</li>
@@ -67,6 +74,14 @@ async function upload() {
             <li>Don't bypass the file size limit by uploading chunks. (may automate this check later)</li>
             <li>Don't try to hack or take down the server (unless you're going to report bugs responsibly)</li>
         </ol>
+    </Modal>
+
+    <Modal :show="showInstanceModal" @close="showInstanceModal = false">
+        <h2 class="text-center">Instance Info</h2>
+        <ul>
+            <li>This instance is {{ instance.secured ? "" : "NOT " }}protected by a password</li>
+            <li>This instance is running `pond` version {{ instance.backendVersion }}</li>
+        </ul>
     </Modal>
 
     <Modal :show="showUploadModal" @close="showUploadModal = false">
@@ -85,5 +100,9 @@ h1 {
     width: 100%;
     background-color: #6272a4;
     padding: 0.2em;
+
+    display: flex;
+    column-gap: 0.5em;
+    justify-content: center;
 }
 </style>
