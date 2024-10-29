@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
 import Progress from "./components/Progress.vue";
 import Modal from "./components/Modal.vue";
@@ -9,19 +9,20 @@ import FileList from "./components/FileList.vue";
 import instance from "./stores/instanceInfo";
 
 const files = ref<File[]>([]);
-const percent = ref(0);
+const uploadPercent = ref(0);
 
-// TODO group these into one `reactive()` variable
-const showUploadModal = ref(false);
-const showRulesModal = ref(false);
-const showInstanceModal = ref(false);
+const modalsShown = reactive({
+    rules: false,
+    instance: false,
+    upload: false,
+});
 
 function handleFilesDropped(droppedFiles: File[]) {
     files.value.push(...droppedFiles);
 }
 
 async function upload() {
-    showUploadModal.value = true;
+    modalsShown.upload = true;
 
     const formData = new FormData();
     files.value.forEach((file) => {
@@ -33,16 +34,16 @@ async function upload() {
         body: formData,
         onprogress: (event: ProgressEvent) => {
             if (event.lengthComputable) {
-                percent.value = (event.loaded / event.total) * 99;
+                uploadPercent.value = (event.loaded / event.total) * 99;
             }
         }
     })
 
-    percent.value = 100;
+    uploadPercent.value = 100;
     setTimeout(() => {
-        percent.value = 0;
+        uploadPercent.value = 0;
         files.value = [];
-        showUploadModal.value = false;
+        modalsShown.upload = false;
     }, 1000);
 }
 </script>
@@ -60,11 +61,11 @@ async function upload() {
     </div>
 
     <div class="footer text-center">
-        <button @click="showRulesModal = true">Rules</button>
-        <button @click="showInstanceModal = true">Instance</button>
+        <button @click="modalsShown.rules = true">Rules</button>
+        <button @click="modalsShown.instance = true">Instance</button>
     </div>
 
-    <Modal :show="showRulesModal" @close="showRulesModal = false">
+    <Modal :show="modalsShown.rules" @close="modalsShown.rules = false">
         <h2 class="text-center">Rules</h2>
         <p>TL;DR use common sense. Failure to comply on public instances will probably get you banned.</p>
         <ol>
@@ -76,7 +77,7 @@ async function upload() {
         </ol>
     </Modal>
 
-    <Modal :show="showInstanceModal" @close="showInstanceModal = false">
+    <Modal :show="modalsShown.instance" @close="modalsShown.instance = false">
         <h2 class="text-center">Instance Info</h2>
         <ul>
             <li>This instance is {{ instance.secured ? "" : "NOT " }}protected by a password</li>
@@ -84,8 +85,8 @@ async function upload() {
         </ul>
     </Modal>
 
-    <Modal :show="showUploadModal" @close="showUploadModal = false">
-        <Progress class="block center" :percent="percent" />
+    <Modal :show="modalsShown.upload" @close="modalsShown.upload = false">
+        <Progress class="block center" :percent="uploadPercent" />
     </Modal>
 </template>
 
