@@ -11,6 +11,22 @@ if (!fs.existsSync(FILE_UPLOAD_DEST)) {
     fs.mkdirSync(FILE_UPLOAD_DEST);
 }
 
+// clear the temp upload directory on startup
+fs.readdir(FILE_UPLOAD_DEST, (err, files) => {
+    if (err) {
+        console.error("Error reading upload directory: ", err);
+        return;
+    }
+
+    for (const file of files) {
+        fs.unlink(FILE_UPLOAD_DEST + file, (err) => {
+            if (err) {
+                console.error("Error deleting file: ", err);
+            }
+        });
+    }
+});
+
 const app = express();
 
 // initialize multer for file upload handling
