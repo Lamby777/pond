@@ -28,6 +28,8 @@ fs.readdir(FILE_UPLOAD_DEST, (err, files) => {
 });
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // initialize multer for file upload handling
 const upload = multer({
@@ -58,6 +60,20 @@ app.get("/api/instance", (req, res) => {
 });
 
 app.post("/api/upload", upload.array("files"), (req, res) => {
+    if (FILE_UPLOAD_PASSWORD_HASH) {
+        const password = req.body.password;
+
+        if (!password) {
+            console.log(`Rejected an upload: no password provided`);
+            return res.status(400).send("No password provided.");
+        }
+
+        if (!bcrypt.compareSync(password, FILE_UPLOAD_PASSWORD_HASH)) {
+            console.log(`Rejected an upload: invalid password \`${password}\` provided`);
+            return res.status(403).send("Invalid password.");
+        }
+    }
+
     if (!req.files) {
         return res.status(400).send("No files uploaded.");
     }

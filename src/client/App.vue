@@ -73,14 +73,21 @@ async function upload() {
             <li>Don't upload anything that you don't have permission to upload.</li>
             <li>Don't use this site as a place to distribute malware.</li>
             <li>Don't bypass the file size limit by uploading chunks. (might set an hourly quota later)</li>
-            <li>Don't try to hack or take down the server (unless you're going to report bugs responsibly)</li>
+            <li>
+                Don't try to hack or take down the server (unless you're on your own instance for testing purposes, of
+                course)
+            </li>
         </ol>
     </Modal>
 
     <Modal :show="modalsShown.instance" @close="modalsShown.instance = false">
         <h2 class="text-center">Instance Info</h2>
         <ul>
-            <li>This instance is {{ instance.secured ? "" : "NOT " }}protected by a password</li>
+            <li>
+                This instance is {{ instance.secured ? "" : "NOT " }}protected by a password!
+                <span v-if="instance.secured">🔒</span>
+                <span v-else>🔓</span>
+            </li>
             <li>This instance is running `pond` version {{ instance.backendVersion }}</li>
         </ul>
     </Modal>
