@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "bcrypt": "^5.1.1",
+        "better-sqlite3": "^11.7.2",
         "express": "^4.18.2",
         "multer": "^1.4.5-lts.1",
         "tsx": "^4.4.0",
@@ -24,6 +25,6 @@
         "nodemon": "^3.0.1",
         "sass": "^1.80.4",
         "vite": "^5.0.2",
-        "vue-tsc": "^1.8.22"
+        "vue-tsc": "^2.2.0"
     }
 }

@@ -62,8 +62,6 @@ async function upload(password?: string) {
         return;
     }
 
-    res = response.json();
-
     // reset the progress bar and the files list
     uploadPercent.value = 100;
     setTimeout(() => {
