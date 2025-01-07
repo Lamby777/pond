@@ -2,6 +2,9 @@ import { homedir } from "os";
 import path from "path";
 import bcrypt from "bcrypt";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 export const APP_FOLDER = process.env.NODE_ENV === "production" ? "/srv/pond/" :
     path.join(homedir(), "pond/");
 export const DB_PATH = path.join(APP_FOLDER, "pond.db");
