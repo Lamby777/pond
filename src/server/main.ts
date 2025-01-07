@@ -66,17 +66,17 @@ app.post("/api/upload", upload.array("files"), (req, res) => {
 
         if (!password) {
             console.log(`Rejected an upload: no password provided`);
-            return res.status(400).send("No password provided.");
+            return res.status(400).json({ error: "nopassword" });
         }
 
         if (!bcrypt.compareSync(password, FILE_UPLOAD_PASSWORD_HASH)) {
             console.log(`Rejected an upload: invalid password \`${password}\` provided`);
-            return res.status(403).send("Invalid password.");
+            return res.status(403).json({ error: "badpassword" });
         }
     }
 
     if (!req.files) {
-        return res.status(400).send("No files uploaded.");
+        return res.status(400).json({ error: "nofilesuploaded" });
     }
 
     console.log("Received files:");

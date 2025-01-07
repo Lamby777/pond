@@ -15,25 +15,23 @@ const modalsShown = reactive({
     rules: false,
     instance: false,
     upload: false,
+    password: false,
+    badpassword: false,
 });
 
 function handleFilesDropped(droppedFiles: File[]) {
     files.value.push(...droppedFiles);
 }
 
-// before upload, ask for password if necessary
-async function promptUpload() {
-    if (instance.secured) {
-        const password = prompt("Enter the password to upload files");
-        if (password === null) return;
-
-        upload(password);
-    }
-}
-
 async function upload(password?: string) {
+    // if no password given when required, do nothing
+    if (!password && instance.secured) return;
+
+    // swap modals to the upload progress one
+    modalsShown.password = false;
     modalsShown.upload = true;
 
+    // start making a formdata object to send to the backend
     const formData = new FormData();
 
     // add the password to formdata
@@ -45,7 +43,7 @@ async function upload(password?: string) {
     });
 
     // make the request and animate the progress bar when it's progressing
-    await fetch("/api/upload", {
+    const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
         onprogress: (event: ProgressEvent) => {
@@ -53,14 +51,26 @@ async function upload(password?: string) {
                 uploadPercent.value = (event.loaded / event.total) * 100;
             }
         }
-    })
+    });
+
+    if (!res.ok) {
+        const { error } = await res.json();
+        uploadPercent.value = 0;
+        modalsShown.upload = false;
+
+        if (error === "badpassword") modalsShown.badpassword = true;
+        return;
+    }
+
+    res = response.json();
 
     // reset the progress bar and the files list
     uploadPercent.value = 100;
     setTimeout(() => {
         uploadPercent.value = 0;
-        files.value = [];
         modalsShown.upload = false;
+
+        files.value = [];
     }, 1000);
 }
 </script>
@@ -74,7 +84,8 @@ async function upload(password?: string) {
 
         <FileList :files="files" />
 
-        <button @click="instance.secured ? promptUpload() : upload()">Upload!</button>
+        <button v-if="files.length > 0"
+            @click="instance.secured ? modalsShown.password = true : upload()">Upload!</button>
     </div>
 
     <div class="footer text-center">
@@ -109,8 +120,23 @@ async function upload(password?: string) {
         </ul>
     </Modal>
 
+    <Modal :show="modalsShown.password" @close="modalsShown.password = false">
+        <h2 class="text-center">Password Required</h2>
+        <p>This instance is password-protected. Please enter the password to continue.</p>
+
+        <form @submit.prevent="upload($event.target.password.value)">
+            <!-- TODO make this box rounded and comfy -->
+            <input type="password" name="password" />
+        </form>
+    </Modal>
+
     <Modal :show="modalsShown.upload" @close="modalsShown.upload = false">
         <Progress class="block center" :percent="uploadPercent" />
+    </Modal>
+
+    <Modal :show="modalsShown.badpassword" @close="modalsShown.badpassword = false">
+        <h2>Bad Password.</h2>
+        <p>The password you entered was incorrect. Please try again. (Or please don't, depending on who you are. :P)</p>
     </Modal>
 </template>
 
