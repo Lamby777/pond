@@ -10,6 +10,7 @@ import instance from "./stores/instanceInfo";
 
 const files = ref<File[]>([]);
 const uploadPercent = ref(0);
+const uploadedFilenamePairs = ref([]);
 
 const modalsShown = reactive({
     rules: false,
@@ -17,6 +18,7 @@ const modalsShown = reactive({
     upload: false,
     password: false,
     badpassword: false,
+    uploadDone: false,
 });
 
 function handleFilesDropped(droppedFiles: File[]) {
@@ -64,20 +66,23 @@ async function upload(password?: string) {
 
     if (!res.ok) {
         const { error } = await res.json();
-        uploadPercent.value = 0;
         modalsShown.upload = false;
+        uploadPercent.value = 0;
 
         if (error === "badpassword") modalsShown.badpassword = true;
+
         return;
     }
 
+    uploadedFilenamePairs.value = (await res.json()).filenamePairs;
+
     // reset the progress bar and the files list
     uploadPercent.value = 100;
+    files.value = [];
     setTimeout(() => {
-        uploadPercent.value = 0;
         modalsShown.upload = false;
-
-        files.value = [];
+        uploadPercent.value = 0;
+        modalsShown.uploadDone = true;
     }, 1000);
 }
 </script>
@@ -143,6 +148,17 @@ async function upload(password?: string) {
     <Modal :show="modalsShown.badpassword" @close="modalsShown.badpassword = false">
         <h2>Bad Password.</h2>
         <p>The password you entered was incorrect. Please try again. (Or please don't, depending on who you are. :P)</p>
+    </Modal>
+
+    <Modal :show="modalsShown.uploadDone" @close="modalsShown.uploadDone = false">
+        <h2>Upload Done!</h2>
+        <p>Thanks for choosing `pond`! Here are the the links to copy:</p>
+
+        <ul>
+            <li v-for="pair in uploadedFilenamePairs">
+                <a :href="`/api/get/${pair.token}`" target="_blank">{{ pair.filename }}</a>
+            </li>
+        </ul>
     </Modal>
 </template>
 

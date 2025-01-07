@@ -89,7 +89,12 @@ app.post("/api/upload", upload.array("files"), (req, res) => {
         console.log(` - ${file.originalname}\n   (saved as ${file.filename})`);
     }
 
-    res.send("File uploaded successfully.");
+    res.status(200).json({
+        filenamePairs: req.files.map((file) => ({
+            filename: file.originalname,
+            token: file.filename,
+        })),
+    });
 });
 
 app.get("/api/get/:token", (req, res) => {
