@@ -11,7 +11,7 @@ export namespace db {
     /// Check the database for the name of a file associated with a token
     export function getFilenameFromToken(token: string) {
         return database.prepare(`SELECT filename FROM uploads WHERE token = ?;`)
-            .get(token);
+            .get(token)?.filename;
     }
 
     /// Insert a token and filename pair

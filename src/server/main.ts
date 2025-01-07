@@ -92,6 +92,18 @@ app.post("/api/upload", upload.array("files"), (req, res) => {
     res.send("File uploaded successfully.");
 });
 
+app.get("/api/get/:token", (req, res) => {
+    const { token } = req.params;
+    const filename = db.getFilenameFromToken(token);
+
+    if (!filename) {
+        // TODO rate limiting
+        return res.status(404).json({ error: "notfound" });
+    }
+
+    res.download(FILE_UPLOAD_DEST + token, filename);
+});
+
 /// Create a securely random token to use for a file upload's ID
 function generateToken() {
     return crypto.randomBytes(UPLOAD_ID_LEN / 8).toString("hex");
