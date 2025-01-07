@@ -5,6 +5,7 @@ const emit = defineEmits<{
     (e: "filesDropped", files: File[]): void;
 }>();
 
+// TODO is it bad practice to put an HTML element in a ref like this?
 const fileInput = ref<HTMLInputElement | null>(null);
 
 function handleDrop(event: DragEvent) {
@@ -13,12 +14,15 @@ function handleDrop(event: DragEvent) {
 }
 
 function triggerFileSelect() {
-    fileInput.value?.click();
+    fileInput.value!.click();
 }
 
 function handleFileSelect(event: Event) {
     const files = Array.from((event.target as HTMLInputElement).files || []);
     emit("filesDropped", files);
+
+    // clear the input so the same file can be selected again if needed
+    fileInput.value!.value = "";
 }
 </script>
 
