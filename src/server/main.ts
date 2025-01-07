@@ -42,7 +42,7 @@ const upload = multer({
         },
 
         filename: (req, file, cb) => {
-            const newname = Date.now() + "-" + file.originalname;
+            const newname = Date.now() + "-" + generateToken();
             cb(null, newname);
         },
     }),
@@ -84,10 +84,9 @@ app.post("/api/upload", upload.array("files"), (req, res) => {
 
     console.log("Received files:");
     for (const file of req.files) {
-        const token = generateToken();
-        db.push(token, file.filename);
+        db.push(file.filename, file.originalname);
 
-        console.log(` - ${file.filename}\n   (saved as ${token})`);
+        console.log(` - ${file.originalname}\n   (saved as ${file.filename})`);
     }
 
     res.send("File uploaded successfully.");

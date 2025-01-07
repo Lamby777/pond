@@ -23,6 +23,15 @@ function handleFilesDropped(droppedFiles: File[]) {
     files.value.push(...droppedFiles);
 }
 
+function showPasswordPrompt() {
+    modalsShown.password = true;
+
+    // focus the password input
+    setTimeout(() => {
+        document.getElementById("upload-password").focus();
+    }, 100);
+}
+
 async function upload(password?: string) {
     // if no password given when required, do nothing
     if (!password && instance.secured) return;
@@ -82,8 +91,7 @@ async function upload(password?: string) {
 
         <FileList :files="files" />
 
-        <button v-if="files.length > 0"
-            @click="instance.secured ? modalsShown.password = true : upload()">Upload!</button>
+        <button v-if="files.length > 0" @click="instance.secured ? showPasswordPrompt() : upload()">Upload!</button>
     </div>
 
     <div class="footer text-center">
@@ -124,7 +132,7 @@ async function upload(password?: string) {
 
         <form @submit.prevent="upload($event.target.password.value)">
             <!-- TODO make this box rounded and comfy -->
-            <input type="password" name="password" />
+            <input id="upload-password" type="password" name="password" />
         </form>
     </Modal>
 
