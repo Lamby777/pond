@@ -2,6 +2,7 @@ import express from "express";
 import ViteExpress from "vite-express";
 import multer from "multer";
 import fs from "fs";
+import bcrypt from "bcrypt";
 
 import { version } from '../../package.json';
 import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST, FILE_UPLOAD_PASSWORD_HASH } from "./consts";
@@ -60,7 +61,7 @@ app.get("/api/instance", (req, res) => {
 });
 
 app.post("/api/upload", upload.array("files"), (req, res) => {
-    if (FILE_UPLOAD_PASSWORD_HASH) {
+    if (!!FILE_UPLOAD_PASSWORD_HASH) {
         const password = req.body.password;
 
         if (!password) {

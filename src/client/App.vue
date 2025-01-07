@@ -21,14 +21,30 @@ function handleFilesDropped(droppedFiles: File[]) {
     files.value.push(...droppedFiles);
 }
 
-async function upload() {
+// before upload, ask for password if necessary
+async function promptUpload() {
+    if (instance.secured) {
+        const password = prompt("Enter the password to upload files");
+        if (password === null) return;
+
+        upload(password);
+    }
+}
+
+async function upload(password?: string) {
     modalsShown.upload = true;
 
     const formData = new FormData();
+
+    // add the password to formdata
+    if (password) formData.append("password", password);
+
+    // add the files to formdata
     files.value.forEach((file) => {
         formData.append("files", file);
     });
 
+    // make the request and animate the progress bar when it's progressing
     await fetch("/api/upload", {
         method: "POST",
         body: formData,
@@ -39,6 +55,7 @@ async function upload() {
         }
     })
 
+    // reset the progress bar and the files list
     uploadPercent.value = 100;
     setTimeout(() => {
         uploadPercent.value = 0;
@@ -57,7 +74,7 @@ async function upload() {
 
         <FileList :files="files" />
 
-        <button @click="upload">Upload!</button>
+        <button @click="instance.secured ? promptUpload() : upload()">Upload!</button>
     </div>
 
     <div class="footer text-center">
