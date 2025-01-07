@@ -3,9 +3,11 @@ import ViteExpress from "vite-express";
 import multer from "multer";
 import fs from "fs";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 import { version } from '../../package.json';
-import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST, FILE_UPLOAD_PASSWORD_HASH } from "./consts";
+import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST, FILE_UPLOAD_PASSWORD_HASH, UPLOAD_ID_LEN } from "./consts";
+import { db } from "./db";
 
 // make the temp upload directory if it doesn't exist
 if (!fs.existsSync(FILE_UPLOAD_DEST)) {
@@ -40,7 +42,8 @@ const upload = multer({
         },
 
         filename: (req, file, cb) => {
-            cb(null, Date.now() + "-" + file.originalname);
+            const newname = Date.now() + "-" + file.originalname;
+            cb(null, newname);
         },
     }),
 
@@ -80,10 +83,20 @@ app.post("/api/upload", upload.array("files"), (req, res) => {
     }
 
     console.log("Received files:");
-    console.log(req.files);
+    for (const file of req.files) {
+        const token = generateToken();
+        db.push(token, file.filename);
+
+        console.log(` - ${file.filename}\n   (saved as ${token})`);
+    }
 
     res.send("File uploaded successfully.");
 });
+
+/// Create a securely random token to use for a file upload's ID
+function generateToken() {
+    return crypto.randomBytes(UPLOAD_ID_LEN / 8).toString("hex");
+}
 
 ViteExpress.listen(app, PORT, () =>
     console.log(`Listening on port ${PORT}...`),
