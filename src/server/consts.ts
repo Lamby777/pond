@@ -9,6 +9,8 @@ export const FILE_UPLOAD_PASSWORD_HASH = generatePasswordHash();
 
 function generatePasswordHash() {
     const plaintext = process.env.PASSWORD;
+    process.env.PASSWORD = "";
+
     if (!plaintext) {
         console.warn("Running in insecure mode! Provide a password using the PASSWORD environment variable to prevent internet trolls and weirdos from potentially getting you in legal trouble.");
         return null;

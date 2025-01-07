@@ -34,7 +34,7 @@ async function upload() {
         body: formData,
         onprogress: (event: ProgressEvent) => {
             if (event.lengthComputable) {
-                uploadPercent.value = (event.loaded / event.total) * 99;
+                uploadPercent.value = (event.loaded / event.total) * 100;
             }
         }
     })
