@@ -1,7 +1,7 @@
 import bsql3 from "better-sqlite3";
 import fs from "fs";
 
-import { APP_FOLDER, UPLOAD_ID_LEN, DB_PATH } from "./consts.js";
+import { APP_FOLDER, DB_PATH } from "./consts.js";
 
 fs.mkdirSync(APP_FOLDER, { recursive: true });
 const database = new bsql3(DB_PATH);
@@ -10,8 +10,10 @@ database.pragma('journal_mode = WAL');
 export namespace db {
     /// Check the database for the name of a file associated with a token
     export function getFilenameFromToken(token: string) {
-        return database.prepare(`SELECT filename FROM uploads WHERE token = ?;`)
-            .get(token)?.filename;
+        const row = database.prepare(`SELECT filename FROM uploads WHERE token = ?;`)
+            .get(token) as { filename: string } | undefined;
+
+        return row?.filename;
     }
 
     /// Insert a token and filename pair

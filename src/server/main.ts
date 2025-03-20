@@ -6,8 +6,8 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 import { version } from '../../package.json';
-import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST, FILE_UPLOAD_PASSWORD_HASH, UPLOAD_ID_LEN } from "./consts";
-import { db } from "./db";
+import { PORT, FILE_UPLOAD_LIMIT, FILE_UPLOAD_DEST, FILE_UPLOAD_PASSWORD_HASH, UPLOAD_ID_LEN } from "./consts.js";
+import { db } from "./db.js";
 
 // make the temp upload directory if it doesn't exist
 if (!fs.existsSync(FILE_UPLOAD_DEST)) {
@@ -37,11 +37,11 @@ app.use(express.urlencoded({ extended: true }));
 // initialize multer for file upload handling
 const upload = multer({
     storage: multer.diskStorage({
-        destination: function (req, file, cb) {
+        destination: function(_req, _file, cb) {
             cb(null, FILE_UPLOAD_DEST);
         },
 
-        filename: (req, file, cb) => {
+        filename: (_req, _file, cb) => {
             const newname = Date.now() + "-" + generateToken();
             cb(null, newname);
         },
@@ -50,7 +50,7 @@ const upload = multer({
     limits: { fileSize: FILE_UPLOAD_LIMIT },
 });
 
-app.get("/api/instance", (req, res) => {
+app.get("/api/instance", (_req, res) => {
     res.json({
         /// Is the ability to upload files locked behind a password prompt?
         secured: !!FILE_UPLOAD_PASSWORD_HASH,
@@ -80,6 +80,12 @@ app.post("/api/upload", upload.array("files"), (req, res) => {
 
     if (!req.files) {
         return res.status(400).json({ error: "nofilesuploaded" });
+    }
+
+    if (!Array.isArray(req.files)) {
+        // this won't happen because we used `upload.array` above.
+        // please stfu, typescript
+        return;
     }
 
     console.log("Received files:");
